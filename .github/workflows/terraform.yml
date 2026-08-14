@@ -16,40 +16,30 @@ jobs:
       run:
         working-directory: parent_module
 
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
     steps:
 
-      # 1. Checkout GitHub repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.15.8
 
-      # 3. Terraform Init
       - name: Terraform Init
         run: terraform init
-        env:
-          ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-          ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
 
-      # 4. Terraform Format Check
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-      # 5. Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # 6. Terraform Plan
       - name: Terraform Plan
         run: terraform plan
-        env:
-          ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-          ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
-          ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
